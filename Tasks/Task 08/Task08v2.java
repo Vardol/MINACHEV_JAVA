@@ -24,6 +24,7 @@ class Task08v2 {
         System.out.println(";");
         int max = array[0];
 //sorting
+        // taking local maximums left
         while (maxposition != array.length - 1) {
             for (i = 1; maxposition < 0; i++) {
                 if (i > array.length - 2) {
@@ -31,6 +32,12 @@ class Task08v2 {
                 }
                 else {
                     if (array[i] > array[i - 1]) {
+                        if (array[i] > array[i + 1]){
+                            max = array[i];
+                            maxposition = i;
+                        }
+                    }
+                    if (array[i] = array[i - 1]) {
                         if (array[i] > array[i + 1]){
                             max = array[i];
                             maxposition = i;
@@ -50,13 +57,45 @@ class Task08v2 {
             }
             
         }
-            for (i = array.length - 1; i > 0; i--) {
-                if (array[i] > array[i - 1]) {
-                    max = array[i];
-                    array[i] = array[i - 1];
-                    array[i - 1] = max;
+        // taking local minimums right
+        maxposition = -1;
+        max = array[0];
+        while (maxposition != array.length - 1) {
+            for (i = 1; maxposition < 0; i++) {
+                if (i > array.length - 2) {
+                    maxposition = array.length - 1;
+                }
+                else {
+                    if (array[i] < array[i - 1]) {
+                        if (array[i] < array[i + 1]){
+                            max = array[i];
+                            maxposition = i;
+                        }
+                    }
                 }
             }
+            for (i = maxposition; i < arraylength -1; i++) {
+                if (array[i] < array[i + 1]) {
+                    max = array[i];
+                    array[i] = array[i + 1];
+                    array[i + 1] = max;
+                }
+            }
+            if (maxposition != array.length - 1) {
+                maxposition = -1;
+            }
+            
+        }
+
+ //           while (array[arraylength - 1] > array[arraylength - 2]) {
+ //               for (i = array.length - 1; i > 0; i--) {
+ //                   if (array[i] > array[i - 1]) {
+ //                       max = array[i];
+ //                       array[i] = array[i - 1];
+ //                       array[i - 1] = max;
+ //                   }
+ //               }
+ //           }
 
 //showing user sorted array
         System.out.print("array sorted descending: " + array[0]);
