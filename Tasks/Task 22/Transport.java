@@ -1,22 +1,22 @@
 import java.util.Random;
 
 public abstract class Transport {
-	private String platenumber;
-	private int size;
-	private int position;
-	private int speed;
-	private String name;
-	private String drivemethod;
-	private boolean parked;
+	protected String platenumber;
+	protected int size;
+	protected int position;
+	protected int speed;
+	protected String name;
+	protected String drivemethod;
+	protected boolean parked;
 	protected static final int STANDARTSIZE = 2;
 
 	public void park(Parking parking) {
 		if (this.parked == true || this.position == parking.getPosition()) {
 			System.out.println("Already parked");
-			this.parked = true
+			this.parked = true;
 			return;
 		}
-		if (Math.sqrt(Math.square(this.position - parking.getPosition())) > this.speed) {
+		if (Math.sqrt(Math.pow(this.position - parking.getPosition(), 2)) > this.speed) {
 			System.out.println("Parking too far. Move closer first.");
 			return;
 		}
@@ -24,16 +24,16 @@ public abstract class Transport {
 			System.out.println("Not enough space on the parking.");
 			return;
 		}
-		if (this.size <= parking.getAvailableSpace() && Math.sqrt(Math.square(this.position - parking.getPosition())) <= this.speed && this.parked == false) {
-				parking.park(this.getPlateNumber(), this.getSize());
-				position = parking.getPosition();
+		if (this.size <= parking.getAvailableSpace() && Math.sqrt(Math.pow(this.position - parking.getPosition(), 2)) <= this.speed && this.parked == false) {
+				parking.park(this, this.getSize());
+				this.position = parking.getPosition();
 				this.parked = true;
 		}
 	}
 
 	public void unpark(Parking parking) {
 		if (this.parked) {
-			parking.unpark(this.getPlateNumber());
+			parking.unpark(this);
 			this.position = parking.getPosition() + 1;
 			this.parked = false;
 		} else {
@@ -48,12 +48,12 @@ public abstract class Transport {
 
 	protected char generateLetter() {
 		Random rnd = new Random();
-		return (rnd.nextInt(26) + 65);
+		return (char)(rnd.nextInt(26) + 65);
 	}
 
 	protected char generateDigit() {
 		Random rnd = new Random();
-		return (rnd.nextInt(10) + 48);
+		return (char)(rnd.nextInt(10) + 48);
 	}
 
 	public String getPlateNumber() {

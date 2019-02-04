@@ -3,7 +3,7 @@ public class Glider extends Mechanized implements Flying {
 	public static final int GLIDER_MAX_HEIGHT = 3;
 	private int maxheight;
 
-	public Glider(Space space) {
+	public Glider() {
 		this.size = STANDARTSIZE / 2;
 		this.speed = PLANEMAXSPEED;
 		this.maxheight = PLANE_MAX_HEIGHT;

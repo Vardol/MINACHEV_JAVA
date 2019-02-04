@@ -1,5 +1,5 @@
 public abstract class Mechanized extends Transport {
-	private String enginenumber;
+	protected String enginenumber;
 	public static final String engine = "Engine roars. ";
 
 	protected String generateEngineNumber() {

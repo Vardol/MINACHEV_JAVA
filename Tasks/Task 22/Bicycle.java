@@ -1,7 +1,7 @@
 public class Bicycle extends Transport {
 	protected static final int BICYCLEMAXSPEED = 30;
 
-	public Bicycle(Space space) {
+	public Bicycle() {
 		this.size = STANDARTSIZE / 2;
 		this.speed = BICYCLEMAXSPEED;
 		this.name = "Bicycle";

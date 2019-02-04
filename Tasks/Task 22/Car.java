@@ -1,7 +1,9 @@
+import java.util.Random;
+
 public class Car extends Mechanized {
 	protected static final int CARMAXSPEED = 200;
 
-	public Car(Space space) {
+	public Car() {
 		this.size = STANDARTSIZE;
 		this.speed = CARMAXSPEED;
 		this.drivemethod = this.engine;

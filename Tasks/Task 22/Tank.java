@@ -2,7 +2,7 @@ public class Tank extends Mechanized implements Shooting {
 	protected static final int TANKSIZE = 2;
 	protected static final int TANKMAXSPEED = 200;
 
-	public Tank(Space space) {
+	public Tank() {
 		this.size = STANDARTSIZE;
 		this.speed = TANKMAXSPEED;
 		this.drivemethod = this.engine;

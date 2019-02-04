@@ -2,7 +2,7 @@ public class Spaceship extends Mechanized implements Flying, Shooting {
 	protected static final int SPACESHIPMAXSPEED = 10000;
 	public static final int SPACESHIPMAXHEIGHT = 2000;
 
-	public Spaceship(Space space) {
+	public Spaceship() {
 		this.size = STANDARTSIZE * 4;
 		this.speed = SPACESHIPMAXSPEED;
 		this.maxheight = SPACESHIPMAXHEIGHT;

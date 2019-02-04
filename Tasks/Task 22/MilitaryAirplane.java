@@ -1,6 +1,6 @@
 public class MilitaryAirplane extends Airplane implements Shooting {
 
-	public MilitaryAirplane(Space space) {
+	public MilitaryAirplane() {
 		this.size = STANDARTSIZE * 2;
 		this.speed = PLANEMAXSPEED * 2;
 		this.maxheight = PLANE_MAX_HEIGHT;

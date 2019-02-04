@@ -20,7 +20,7 @@ public class Task21 {
 			System.out.println("5 - previous channel");
 			System.out.println("6 - watch TV and drink your beer");
 			System.out.println("7 - see the timetable");
-			System.out.println("0 - leave");
+			System.out.println("0 or less to leave");
 			choice = scanner.nextInt();
 			if (choice == 1) {
 				tv.status();
