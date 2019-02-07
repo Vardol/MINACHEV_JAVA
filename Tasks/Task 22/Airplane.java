@@ -18,6 +18,45 @@ public class Airplane extends Mechanized implements Flying {
 		this.parked = false;
 	}
 
+	public Airplane(int position) {
+		this.size = STANDARTSIZE * 4;
+		this.speed = PLANEMAXSPEED;
+		this.maxheight = PLANE_MAX_HEIGHT;
+		this.name = "Airplane";
+		this.drivemethod = this.engine;
+		Random rnd = new Random();
+		this.position = position;
+		this.platenumber = this.generatePlateNumber();
+		this.enginenumber = this.generateEngineNumber();
+		this.parked = false;
+	}
+
+	public Airplane(String platenumber, String enginenumber) {
+		this.size = STANDARTSIZE * 4;
+		this.speed = PLANEMAXSPEED;
+		this.maxheight = PLANE_MAX_HEIGHT;
+		this.name = "Airplane";
+		this.drivemethod = this.engine;
+		Random rnd = new Random();
+		this.position = (rnd.nextInt(10001));
+		this.platenumber = platenumber;
+		this.enginenumber = enginenumber;
+		this.parked = false;
+	}
+
+	public Airplane(int position, String platenumber, String enginenumber) {
+		this.size = STANDARTSIZE * 4;
+		this.speed = PLANEMAXSPEED;
+		this.maxheight = PLANE_MAX_HEIGHT;
+		this.name = "Airplane";
+		this.drivemethod = this.engine;
+		Random rnd = new Random();
+		this.position = position;
+		this.platenumber = platenumber;
+		this.enginenumber = enginenumber;
+		this.parked = false;
+	}
+
 @Override
 	public void move(int distance) {
 		this.fly(distance, DEFAULT_HEIGHT);
