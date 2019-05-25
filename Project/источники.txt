@@ -1,1 +1,5 @@
 https://www.finanz.ru/valyuty/usd-rub
+
+новостной RSS
+https://www.mt5.com/ru/rss
+https://www.moex.com/a40

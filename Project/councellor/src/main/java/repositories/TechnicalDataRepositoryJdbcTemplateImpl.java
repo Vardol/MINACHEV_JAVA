@@ -41,6 +41,10 @@ public class TechnicalDataRepositoryJdbcTemplateImpl implements TechnicalDataRep
                     .dataSource(row.getString("data_source"))
                     .build();
 
+    public TechnicalDataRepositoryJdbcTemplateImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     public void save(TechnicalData model) {
         jdbcTemplate.update(SQL_INSERT, model.getOpenRate(), model.getCloseRate(), model.getDate(),
