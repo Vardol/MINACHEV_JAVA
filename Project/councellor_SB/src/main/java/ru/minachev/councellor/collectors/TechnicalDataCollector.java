@@ -4,5 +4,5 @@ import org.springframework.stereotype.Component;
 import ru.minachev.councellor.models.TechnicalData;
 
 @Component
-public abstract class TechnicalDataCollector implements Collector<TechnicalData> {
+public interface TechnicalDataCollector extends Collector<TechnicalData> {
 }

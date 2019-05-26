@@ -13,14 +13,14 @@
 </head>
 <body>
 <script>
-    function search(query) {
+    function search(query,type) {
         $.ajax({
             method: "GET",
-            url: '/search.json?q=' + query
+            url: '/search.json?q=' + query + '&type=' + type
         }).done(function (response) {
             let resultPlace = document.getElementById('result');
             console.clear();
-            let resultString = '<table>';
+            let resultString = '<table border><tr><th>Дата</th><th>Открытие</th><th>Закрытие</th><th>MAX</th><th>MIN</th><th>Источник</th></tr>';
             for (let i = 0; i < response.length; i++) {
                 let current = response[i];
                 resultString += '<tr>';
@@ -52,17 +52,18 @@
         });
     }
 </script>
-<#--<div>-->
-<#--    <form method="post">-->
-<#--        <input id="query" type="text" placeholder="дата в формате yyyy-mm-dd">-->
-<#--        <br>-->
-<#--        <input type="submit" value="поиск по дате" onclick="search(document.getElementById('query').value)">-->
-<#--    </form>-->
-<#--</div>-->
 <div>
-    <input id="query" type="text" placeholder="источник" onsubmit="search(document.getElementById('query').value)">
+    <input id="dateQuery" type="text" width="25%" placeholder="дата в формате yyyy-mm-dd">
     <br>
-    <input type="submit" value="поиск по источнику" onclick="search(document.getElementById('query').value)">
+    <input type="submit" value="поиск по дате" onclick="search(document.getElementById('dateQuery').value,'date')">
+    <br>
+</div>
+<br>
+<div>
+    <input id="stringQuery" type="text" width="25%" placeholder="источник">
+    <br>
+    <input type="submit" value="поиск по источнику" onclick="search(document.getElementById('stringQuery').value, 'string')">
+    <br>
 </div>
 <div id="result">
 

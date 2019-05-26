@@ -1,10 +1,10 @@
 package ru.minachev.councellor.collectors;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.minachev.councellor.Scheduler.TimeBound;
@@ -13,17 +13,21 @@ import ru.minachev.councellor.services.TechnicalDataService;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 @Component
-public class TechnicalDataCollectorFinanzRuImpl extends TechnicalDataCollector implements TimeBound {
-    public static final String URL = "https://www.finanz.ru/valyuty/USD-RUB";
+public class TechnicalDataCollectorFinanzRuImpl implements TechnicalDataCollector, TimeBound {
+    public static final String URL_LAST_XRATE = "https://www.finanz.ru/valyuty/USD-RUB";
+//    public static final String URL_ARCHIVE = "https://www.finanz.ru/valyuty/arhiv-torgov/USD-RUB";
 
     @Autowired
     TechnicalDataService technicalDataServiceImpl;
+
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.uu");
 
     @Override
     public TechnicalData collectLast() {
@@ -31,7 +35,7 @@ public class TechnicalDataCollectorFinanzRuImpl extends TechnicalDataCollector i
 
         {
             try {
-                document = Jsoup.connect(URL).get();
+                document = Jsoup.connect(URL_LAST_XRATE).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -42,55 +46,62 @@ public class TechnicalDataCollectorFinanzRuImpl extends TechnicalDataCollector i
 
         TechnicalData technicalData = null;
 
-        int dd = (table.charAt(table.indexOf("td")+3) - 48) * 10;
-        dd += table.charAt(table.indexOf("td")+4) - 48;
-        int mm = (table.charAt(table.indexOf("td")+6) - 48) * 10;
-        mm += table.charAt(table.indexOf("td")+7) - 48;
-        int yyyy = (table.charAt(table.indexOf("td")+9) -48) * 10;
-        yyyy += table.charAt(table.indexOf("td")+10) - 48 + 2000;
+        LocalDate date = LocalDate.parse(table.substring(table.indexOf("td")+3, table.indexOf("td")+11),dateTimeFormatter);
+//        int dd = (table.charAt(table.indexOf("td")+3) - 48) * 10;
+//        dd += table.charAt(table.indexOf("td")+4) - 48;
+//        int mm = (table.charAt(table.indexOf("td")+6) - 48) * 10;
+//        mm += table.charAt(table.indexOf("td")+7) - 48;
+//        int yyyy = (table.charAt(table.indexOf("td")+9) -48) * 10;
+//        yyyy += table.charAt(table.indexOf("td")+10) - 48 + 2000;
         table = table.substring(table.indexOf("td")+16);
 
-            double closeRate = (double)(table.charAt(table.indexOf("td")+10) -48) * 10;
-            closeRate += (double)(table.charAt(table.indexOf("td")+11) -48);
-            closeRate += (double)(table.charAt(table.indexOf("td")+13) -48) / 10;
-            closeRate += (double)(table.charAt(table.indexOf("td")+14) -48) / 100;
-            closeRate += (double)(table.charAt(table.indexOf("td")+15) -48) / 1000;
-            closeRate += (double)(table.charAt(table.indexOf("td")+16) -48) / 10000;
-            table = table.substring(table.indexOf("td")+29);
+        String closeRateString = table.substring(table.indexOf("td")+10,table.indexOf("td")+17).replace(",",".");
+        double closeRate = Double.parseDouble(closeRateString);
+
+//        double closeRate = (double)(table.charAt(table.indexOf("td")+10) -48) * 10;
+//        closeRate += (double)(table.charAt(table.indexOf("td")+11) -48);
+//        closeRate += (double)(table.charAt(table.indexOf("td")+13) -48) / 10;
+//        closeRate += (double)(table.charAt(table.indexOf("td")+14) -48) / 100;
+//        closeRate += (double)(table.charAt(table.indexOf("td")+15) -48) / 1000;
+//        closeRate += (double)(table.charAt(table.indexOf("td")+16) -48) / 10000;
+        table = table.substring(table.indexOf("td")+29);
 
 
-            double openRate = (double)(table.charAt(table.indexOf("td")+10) -48) * 10;
-            openRate += (double)(table.charAt(table.indexOf("td")+11) -48);
-            openRate += (double)(table.charAt(table.indexOf("td")+13) -48) / 10;
-            openRate += (double)(table.charAt(table.indexOf("td")+14) -48) / 100;
-            openRate += (double)(table.charAt(table.indexOf("td")+15) -48) / 1000;
-            openRate += (double)(table.charAt(table.indexOf("td")+16) -48) / 10000;
-            table = table.substring(table.indexOf("td")+29);
+        String openRateString = table.substring(table.indexOf("td")+10,table.indexOf("td")+17).replace(",",".");
+        double openRate = Double.parseDouble(openRateString);
 
-//            System.out.println("printing row #" + i + "." + rows[i]);
+//        double openRate = (double)(table.charAt(table.indexOf("td")+10) -48) * 10;
+//        openRate += (double)(table.charAt(table.indexOf("td")+11) -48);
+//        openRate += (double)(table.charAt(table.indexOf("td")+13) -48) / 10;
+//        openRate += (double)(table.charAt(table.indexOf("td")+14) -48) / 100;
+//        openRate += (double)(table.charAt(table.indexOf("td")+15) -48) / 1000;
+//        openRate += (double)(table.charAt(table.indexOf("td")+16) -48) / 10000;
+        table = table.substring(table.indexOf("td")+29);
 
-            double intradayMax = (table.charAt(table.indexOf("td")+10) -48) * 10;
-            intradayMax += (double)(table.charAt(table.indexOf("td")+11) -48);
-            intradayMax += (double)(table.charAt(table.indexOf("td")+13) -48) / 10;
-            intradayMax += (double)(table.charAt(table.indexOf("td")+14) -48) / 100;
-            intradayMax += (double)(table.charAt(table.indexOf("td")+15) -48) / 1000;
-            intradayMax += (double)(table.charAt(table.indexOf("td")+16) -48) / 10000;
-            table = table.substring(table.indexOf("td")+29);
+        String intradayMaxString = table.substring(table.indexOf("td")+10,table.indexOf("td")+17).replace(",",".");
+        double intradayMax = Double.parseDouble((intradayMaxString));
 
-//            System.out.println("printing row #" + i + "." + rows[i]);
+//        double intradayMax = (table.charAt(table.indexOf("td")+10) -48) * 10;
+//        intradayMax += (double)(table.charAt(table.indexOf("td")+11) -48);
+//        intradayMax += (double)(table.charAt(table.indexOf("td")+13) -48) / 10;
+//        intradayMax += (double)(table.charAt(table.indexOf("td")+14) -48) / 100;
+//        intradayMax += (double)(table.charAt(table.indexOf("td")+15) -48) / 1000;
+//        intradayMax += (double)(table.charAt(table.indexOf("td")+16) -48) / 10000;
+        table = table.substring(table.indexOf("td")+29);
 
-            double intradayMin = (table.charAt(table.indexOf("td")+10) -48) * 10;
-            intradayMin += (double)(table.charAt(table.indexOf("td")+11) -48);
-            intradayMin += (double)(table.charAt(table.indexOf("td")+13) -48) / 10;
-            intradayMin += (double)(table.charAt(table.indexOf("td")+14) -48) / 100;
-            intradayMin += (double)(table.charAt(table.indexOf("td")+15) -48) / 1000;
-            intradayMin += (double)(table.charAt(table.indexOf("td")+16) -48) / 10000;
+        String intradayMinString = table.substring(table.indexOf("td")+10,table.indexOf("td")+17).replace(",",".");
+        double intradayMin = Double.parseDouble((intradayMinString));
 
-//            System.out.println(dd + "." + mm + "." + yyyy + " open=" + openRate + " close=" + closeRate + " MAX=" + intradayMax + " MIN=" + intradayMin);
-            technicalData = TechnicalData.builder().dataSource(URL).openRate(openRate)
-                    .closeRate(closeRate).intradayMax(intradayMax).intradayMin(intradayMin).date(LocalDate.of(yyyy, mm, dd))
-                    .build();
-            System.out.println("");
+//        double intradayMin = (table.charAt(table.indexOf("td")+10) -48) * 10;
+//        intradayMin += (double)(table.charAt(table.indexOf("td")+11) -48);
+//        intradayMin += (double)(table.charAt(table.indexOf("td")+13) -48) / 10;
+//        intradayMin += (double)(table.charAt(table.indexOf("td")+14) -48) / 100;
+//        intradayMin += (double)(table.charAt(table.indexOf("td")+15) -48) / 1000;
+//        intradayMin += (double)(table.charAt(table.indexOf("td")+16) -48) / 10000;
+
+        technicalData = TechnicalData.builder().dataSource(URL_LAST_XRATE).openRate(openRate)
+                .closeRate(closeRate).intradayMax(intradayMax).intradayMin(intradayMin).date(date)
+                .build();
 
         return technicalData;
     }
@@ -103,74 +114,70 @@ public class TechnicalDataCollectorFinanzRuImpl extends TechnicalDataCollector i
 
         {
             try {
-                document = Jsoup.connect(URL).get();
+                document = Jsoup.connect(URL_LAST_XRATE).get();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         String documentString = document.toString();
+//        Element historicPriceList = document.getElementById("historic-price-list");
+//        String element = historicPriceList.toString();
         String table = documentString.substring(documentString.indexOf("news_table") + 221, documentString.indexOf("news_table") + 2378);
 
         String[] rows = new String[20];
 
         for (int i = 0; table.contains("tr"); i++) {
             rows[i] = table.substring(table.indexOf("tr"), table.indexOf("tr", table.indexOf("tr") + 2));
-//            System.out.println("printing row #" + i + ". " + rows[i]);
-            int dd = (rows[i].charAt(rows[i].indexOf("td")+3) - 48) * 10;
-            dd += rows[i].charAt(rows[i].indexOf("td")+4) - 48;
-            int mm = (rows[i].charAt(rows[i].indexOf("td")+6) - 48) * 10;
-            mm += rows[i].charAt(rows[i].indexOf("td")+7) - 48;
-            int yyyy = (rows[i].charAt(rows[i].indexOf("td")+9) -48) * 10;
-            yyyy += rows[i].charAt(rows[i].indexOf("td")+10) - 48 + 2000;
+            LocalDate date = LocalDate.parse(rows[i].substring(rows[i].indexOf("td")+3, rows[i].indexOf("td")+11),dateTimeFormatter);
             rows[i] = rows[i].substring(rows[i].indexOf("td")+16);
 
-//            System.out.println("printing row #" + i + "." + rows[i]);
-
-            double closeRate = (double)(rows[i].charAt(rows[i].indexOf("td")+10) -48) * 10;
-            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+11) -48);
-            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+13) -48) / 10;
-            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+14) -48) / 100;
-            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+15) -48) / 1000;
-            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+16) -48) / 10000;
+            String closeRateString = rows[i].substring(rows[i].indexOf("td")+10,rows[i].indexOf("td")+17).replace(",",".");
+            double closeRate = Double.parseDouble(closeRateString);
+//            double closeRate = (double)(rows[i].charAt(rows[i].indexOf("td")+10) -48) * 10;
+//            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+11) -48);
+//            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+13) -48) / 10;
+//            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+14) -48) / 100;
+//            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+15) -48) / 1000;
+//            closeRate += (double)(rows[i].charAt(rows[i].indexOf("td")+16) -48) / 10000;
             rows[i] = rows[i].substring(rows[i].indexOf("td")+29);
 
-//            System.out.println("printing row #" + i + "." + rows[i]);
 
-            double openRate = (double)(rows[i].charAt(rows[i].indexOf("td")+10) -48) * 10;
-            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+11) -48);
-            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+13) -48) / 10;
-            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+14) -48) / 100;
-            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+15) -48) / 1000;
-            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+16) -48) / 10000;
+            String openRateString = rows[i].substring(rows[i].indexOf("td")+10,rows[i].indexOf("td")+17).replace(",",".");
+            double openRate = Double.parseDouble(openRateString);
+
+//            double openRate = (double)(rows[i].charAt(rows[i].indexOf("td")+10) -48) * 10;
+//            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+11) -48);
+//            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+13) -48) / 10;
+//            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+14) -48) / 100;
+//            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+15) -48) / 1000;
+//            openRate += (double)(rows[i].charAt(rows[i].indexOf("td")+16) -48) / 10000;
             rows[i] = rows[i].substring(rows[i].indexOf("td")+29);
 
-//            System.out.println("printing row #" + i + "." + rows[i]);
-
-            double intradayMax = (rows[i].charAt(rows[i].indexOf("td")+10) -48) * 10;
-            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+11) -48);
-            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+13) -48) / 10;
-            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+14) -48) / 100;
-            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+15) -48) / 1000;
-            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+16) -48) / 10000;
+            String intradayMaxString = rows[i].substring(rows[i].indexOf("td")+10,rows[i].indexOf("td")+17).replace(",",".");
+            double intradayMax = Double.parseDouble((intradayMaxString));
+//            double intradayMax = (rows[i].charAt(rows[i].indexOf("td")+10) -48) * 10;
+//            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+11) -48);
+//            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+13) -48) / 10;
+//            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+14) -48) / 100;
+//            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+15) -48) / 1000;
+//            intradayMax += (double)(rows[i].charAt(rows[i].indexOf("td")+16) -48) / 10000;
             rows[i] = rows[i].substring(rows[i].indexOf("td")+29);
 
-//            System.out.println("printing row #" + i + "." + rows[i]);
+            String intradayMinString = rows[i].substring(rows[i].indexOf("td")+10,rows[i].indexOf("td")+17).replace(",",".");
+            double intradayMin = Double.parseDouble((intradayMinString));
+//            double intradayMin = (rows[i].charAt(rows[i].indexOf("td")+10) -48) * 10;
+//            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+11) -48);
+//            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+13) -48) / 10;
+//            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+14) -48) / 100;
+//            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+15) -48) / 1000;
+//            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+16) -48) / 10000;
 
-            double intradayMin = (rows[i].charAt(rows[i].indexOf("td")+10) -48) * 10;
-            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+11) -48);
-            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+13) -48) / 10;
-            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+14) -48) / 100;
-            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+15) -48) / 1000;
-            intradayMin += (double)(rows[i].charAt(rows[i].indexOf("td")+16) -48) / 10000;
-
-//            System.out.println(dd + "." + mm + "." + yyyy + " open=" + openRate + " close=" + closeRate + " MAX=" + intradayMax + " MIN=" + intradayMin);
-            TechnicalData technicalData = TechnicalData.builder().dataSource(URL).openRate(openRate)
-                    .closeRate(closeRate).intradayMax(intradayMax).intradayMin(intradayMin).date(LocalDate.of(yyyy, mm, dd) )
+            TechnicalData technicalData = TechnicalData.builder().dataSource(URL_LAST_XRATE).openRate(openRate)
+                    .closeRate(closeRate).intradayMax(intradayMax).intradayMin(intradayMin).date(date)
                     .build();
             result.add(technicalData);
             table = table.substring(table.indexOf("tr", table.indexOf("tr") + 2) + 2);
-            System.out.println("");
 
         }
     return result;

@@ -6,19 +6,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.minachev.councellor.models.TechnicalData;
 import ru.minachev.councellor.services.TechnicalDataService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "/")
 public class SearchController {
 
     @Autowired
     private TechnicalDataService technicalDataService;
-
-    @GetMapping
-    public String getRoot() {
-        return "redirect:/search";
-    }
 
     @GetMapping("/search")
     public String getSearchPage() {
@@ -27,7 +22,15 @@ public class SearchController {
 
     @GetMapping("/search.json")
     @ResponseBody
-    public List<TechnicalData> getTechnicalDataByDate(@RequestParam("q") String query) {
-        return technicalDataService.getTechnicalDataSearchByDataSource(query);
+    public List<TechnicalData> getTechnicalDataByDate(@RequestParam("q") String query,
+                                                      @RequestParam("type") String type) {
+        if (type.equals("string")) {
+            return technicalDataService.getTechnicalDataSearchByDataSource(query);
+        }
+        if (type.equals("date")) {
+            LocalDate queryDate = LocalDate.parse(query);
+            return technicalDataService.getTechnicalDataSearchByDate(queryDate);
+        }
+        return null;
     }
 }
